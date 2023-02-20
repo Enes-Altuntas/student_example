@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="ConsoleOut">
+    <encoder>
+      <pattern>
+        %d{dd/MM/yyyy HH:mm:ss} | %magenta(Thread: %thread) | %highlight(Log Level: %-5level) |
+        %logger{0}.%M -
+        %green(Message:) %boldGreen(%msg%n)
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FileOut">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>
+        %d{dd/MM/yyyy HH:mm:ss} | Thread: %thread | Log Level: %-5level |
+        %logger{0}.%M -
+        Message: %msg%n
+      </pattern>
+    </encoder>
+    <file>${LOG_PATH}/spring-boot-logging.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/archive/spring-boot-logging-%d{dd/MM/yyyy}.%i.log
+      </fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+  </appender>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <property name="LOG_PATH" value="./logs"/>
+
+  <springProfile name="local">
+    <root level="debug">
+      <appender-ref ref="ConsoleOut"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <root level="error">
+      <appender-ref ref="FileOut"/>
+    </root>
+  </springProfile>
+</configuration>
